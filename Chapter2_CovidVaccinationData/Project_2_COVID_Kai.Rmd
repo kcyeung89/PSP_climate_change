@@ -1,0 +1,49 @@
+---
+title: "R_Project2"
+author: "Kai Yeung"
+date: "2025-06-05"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(zoo)
+
+vaccine_admin <- read.csv("covid-19-progress-county-051021.csv")
+
+summary(vaccine_admin)
+```
+
+?trimws
+```{r}
+vaccine_admin$county <- trimws(vaccine_admin$county, which = "both")
+
+vaccine_admin$administered_date <- as.Date(vaccine_admin$administered_date, format = "%Y-%m-%d")
+```
+
+## Calculating the % of vaccinated
+## using subset()
+
+```{r}
+vaccine_CA <- subset(vaccine_admin, county == "All CA Counties")
+```
+
+## CA population
+
+```{r}
+CA_pop <- c(39466917)
+
+##calculating % of people vaccinated with a least one dose
+vaccine_CA$partial_percent <- (vaccine_CA$cumulative_at_least_one_dose/CA_pop)*100
+
+#rounding the % to 2 digits.
+vaccine_CA$partial_percent <- round(vaccine_CA$partial_percent, digits = 2)
+
+##For fully vaccinated and combining the two steps together above
+vaccine_CA$fully_percent <- round(((vaccine_CA$cumulative_fully_vaccinated/CA_pop)*100), digits = 2)
+```
+
+Question: Take a look at the new percentages columns in the dataset (particularly the last one). Compare it to the percentages in the pdf (49.1% of residents have received at least one dose and 35.7% are fully vaccinated). Out percentages are close, but why do you think the calculations might differ from each other?
+
+Answer: We are using the subset we created?
+
