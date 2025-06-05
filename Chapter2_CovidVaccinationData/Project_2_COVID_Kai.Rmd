@@ -118,14 +118,18 @@ vaccine_ala$fully_percent <- round(((vaccine_ala$cumulative_fully_vaccinated/ala
 
 # alameda
 
-ggplot(data = vaccine_ala, aes(x = administered_date, y = partial_percent)) +
-  geom_area(fill="darkolivegreen3", alpha = 0.4) + 
-  geom_area(aes(x= administered_date, y = fully_percent), fill="forestgreen", alpha = 0.4) +
-  ylim(0, 100) +
-  geom_hline(yintercept = 80, linetype='dotdash', col = "olivedrab")+
-  ggtitle("Percentage of Alameda Residents Who are Partially or Fully Vaccinated")+
-  xlab("Administered Date") + ylab("Percentage")
+alameda_Pecentage <- ggplot(data = vaccine_ala, aes(x = administered_date, y = partial_percent)) +
+                        geom_area(fill="darkolivegreen3", alpha = 0.4) + 
+                        geom_area(aes(x= administered_date, y = fully_percent), fill="forestgreen", alpha = 0.4) +
+                        ylim(0, 100) +
+                        geom_hline(yintercept = 80, linetype='dotdash', col = "olivedrab")+
+                        ggtitle("Percentage of Alameda Residents Who are Partially or Fully Vaccinated")+
+                        xlab("Administered Date") + ylab("Percentage")
 
+print(alameda_Pecentage)
+pdf("Alameda Vaccinated Percentage.pdf")
+
+print(alameda_Pecentage)
 ```
 
 ```{r}
@@ -143,11 +147,14 @@ vaccine_ala$wk_avg <- round(vaccine_ala$wk_avg, digits = 0)
 
 # Because the data has NAs, a warning message will appear: "Removed 6 row(s) containing missing values (geom_path)"
 # So you can na.rm = T to remove the NAs from the plot
-ggplot(data = vaccine_ala, aes(x = administered_date, y = total_doses)) +
+Alameda_Dose <- ggplot(data = vaccine_ala, aes(x = administered_date, y = total_doses)) +
   geom_col(fill = "darkolivegreen3", alpha = 0.4) +
   scale_y_continuous() +
   geom_line(data = vaccine_ala, aes(x = administered_date, y = wk_avg), na.rm = T, color = "olivedrab")+
   ggtitle("Doses administered by Alameda County")+
-  ylab("Total Doses") + xlab("Administered Date")
+  ylab("Total Doses") + xlab("Administered Date")+
+  theme(legend.position = "right")
+
+print(Alameda_Dose)
 ```
 
