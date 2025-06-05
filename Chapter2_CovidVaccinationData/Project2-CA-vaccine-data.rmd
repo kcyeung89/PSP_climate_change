@@ -1,7 +1,9 @@
 ---
 title: "Project 2 - CA Covid-19 Vaccine Data"
-output: html_document
-editor_options: 
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
   chunk_output_type: console
 ---
 

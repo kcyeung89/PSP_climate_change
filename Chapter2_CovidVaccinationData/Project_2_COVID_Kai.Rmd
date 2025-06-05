@@ -45,5 +45,109 @@ vaccine_CA$fully_percent <- round(((vaccine_CA$cumulative_fully_vaccinated/CA_po
 
 Question: Take a look at the new percentages columns in the dataset (particularly the last one). Compare it to the percentages in the pdf (49.1% of residents have received at least one dose and 35.7% are fully vaccinated). Out percentages are close, but why do you think the calculations might differ from each other?
 
-Answer: We are using the subset we created?
+Answer: different population data
+
+```{r}
+## show the column names in the dataset
+names(vaccine_CA)
+
+# Plotting the initial graph with the first layer for the partially vaccinated percentages
+ggplot(data = vaccine_CA, aes(x = administered_date, y = partial_percent)) +
+  geom_area(fill = "darkolivegreen3")
+
+# Adding the second layer with the fully vaccinated percentages
+ggplot(data = vaccine_CA, aes(x = administered_date, y = partial_percent)) +
+  geom_area(fill = "darkolivegreen3") + 
+  geom_area(aes(x = administered_date, y = fully_percent), fill="forestgreen")
+
+# Here is an example of changing the opacity of the graph with the aesthetic parameter alpha
+ggplot(data = vaccine_CA, aes(x = administered_date, y = partial_percent)) +
+  geom_area(fill = "darkolivegreen3", alpha = 0.4) + 
+  geom_area(aes(x = administered_date, y = fully_percent), fill="forestgreen", alpha = 0.4)
+```
+
+
+```{r horizontal line}
+
+# Try changing the line type with something different
+
+ggplot(data = vaccine_CA, aes(x = administered_date, y = partial_percent)) +
+  geom_area(fill="darkolivegreen3", alpha = 0.4) + 
+  geom_area(aes(x= administered_date, y = fully_percent), fill="forestgreen", alpha = 0.4) +
+  ylim(0, 100) +
+  geom_hline(yintercept = 80, linetype='dotdash', col = "olivedrab")
+
+```
+
+```{r summary overlay}
+
+# Use the function rollmean() to calculate rolling averages over 7 days
+vaccine_CA$wk_avg <- zoo::rollmean(vaccine_CA$total_doses, k = 7, fill = NA)
+
+# Round the number to the nearest whole number
+vaccine_CA$wk_avg <- round(vaccine_CA$wk_avg, digits = 0)
+
+# Because the data has NAs, a warning message will appear: "Removed 6 row(s) containing missing values (geom_path)"
+# So you can na.rm = T to remove the NAs from the plot
+ggplot(data = vaccine_CA, aes(x = administered_date, y = total_doses)) +
+  geom_col(fill = "darkolivegreen3", alpha = 0.4) +
+  scale_y_continuous() +
+  geom_line(data = vaccine_CA, aes(x = administered_date, y = wk_avg), na.rm = T, color = "olivedrab")
+
+```
+
+```{r subset county}
+# Fill in the county of your chose to subset
+vaccine_ala <- subset(vaccine_admin, county == "Alameda")
+
+# Fill in the county's population
+ala_pop <- c(1682353)
+
+# Calculate the percentage the percentage of those who have had at least one dose in that county
+
+vaccine_ala$partial_percent <- round(((vaccine_ala$cumulative_at_least_one_dose/ala_pop)*100), digits = 2)
+
+# Calculate the percentage of those who are fully vaccinated in that county
+vaccine_ala$fully_percent <- round(((vaccine_ala$cumulative_fully_vaccinated/ala_pop)*100), digits = 2)
+
+```
+
+#plot 1: % for Alameda County
+
+```{r horizontal line}
+
+# alameda
+
+ggplot(data = vaccine_ala, aes(x = administered_date, y = partial_percent)) +
+  geom_area(fill="darkolivegreen3", alpha = 0.4) + 
+  geom_area(aes(x= administered_date, y = fully_percent), fill="forestgreen", alpha = 0.4) +
+  ylim(0, 100) +
+  geom_hline(yintercept = 80, linetype='dotdash', col = "olivedrab")+
+  ggtitle("Percentage of Alameda Residents Who are Partially or Fully Vaccinated")+
+  xlab("Administered Date") + ylab("Percentage")
+
+```
+
+```{r}
+
+
+
+# Plot 2: Doses administered by Alameda county 
+
+
+# Use the function rollmean() to calculate rolling averages over 7 days
+vaccine_ala$wk_avg <- zoo::rollmean(vaccine_ala$total_doses, k = 7, fill = NA)
+
+# Round the number to the nearest whole number
+vaccine_ala$wk_avg <- round(vaccine_ala$wk_avg, digits = 0)
+
+# Because the data has NAs, a warning message will appear: "Removed 6 row(s) containing missing values (geom_path)"
+# So you can na.rm = T to remove the NAs from the plot
+ggplot(data = vaccine_ala, aes(x = administered_date, y = total_doses)) +
+  geom_col(fill = "darkolivegreen3", alpha = 0.4) +
+  scale_y_continuous() +
+  geom_line(data = vaccine_ala, aes(x = administered_date, y = wk_avg), na.rm = T, color = "olivedrab")+
+  ggtitle("Doses administered by Alameda County")+
+  ylab("Total Doses") + xlab("Administered Date")
+```
 
