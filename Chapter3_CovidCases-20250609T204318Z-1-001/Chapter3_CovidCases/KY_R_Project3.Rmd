@@ -1,0 +1,60 @@
+---
+title: "R_Project3_Kai"
+author: "Kai Yeung"
+date: "2025-06-09"
+output: html_document
+---
+
+
+```{r}
+getwd()
+```
+## Load libraries
+```{r}
+library("dplyr")
+library("ggplot2")
+```
+
+## Load in Data
+
+```{r}
+CovidRaw <- read.csv("us-counties.csv")
+View(CovidRaw)
+class(CovidRaw$date)
+```
+
+## Data Cleaning
+
+```{r}
+CovidRaw$date <- as.Date(CovidRaw$date)
+class(CovidRaw$date)
+```
+
+## Subsetting the Data
+
+```{r}
+CovidRawBayCOunties <- subset(CovidRaw, county == "San Francisco" | county == "Alameda" | county == "Santa Clara" | county == "Contra Costa" | county == "San Mateo" | county == "Solano" | county == "Napa" | county == "Sonoma" | county == "Marin")
+
+View(CovidRawBayCOunties)
+```
+
+
+## Plotting
+
+```{r}
+ggplot(data = CovidRawBayCOunties)+
+  geom_point(aes(x = date, y = cases))
+```
+
+```{r}
+ggplot(data = CovidRawBayCOunties)+
+  geom_point(aes(x = date, y = cases, color = county))+
+  scale_color_brewer(palette = "Set3") +
+  scale_x_date(date_labels = "%b %y", date_breaks = "1 month") +
+  ylab("cumulative covid cases") + labs(title = "Covid Cases in Bay Area Counties", color = "county")+
+  guides(colour = guide_legend(override.aes = list(size = 5))) +
+  theme_bw() + theme(panel.grid.minor.x = element_blank(), axis.title.x = element_blank(), legend.position = "bottom", legend.title = element_text(face = "bold"))
+```
+
+
+
